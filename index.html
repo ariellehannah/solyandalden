@@ -10,216 +10,277 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Quicksand', sans-serif;
         }
 
         body {
-            background: #f5f7fa;
-            color: #2d3748;
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
             line-height: 1.6;
+        }
+
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-container h2 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .login-container button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #45a049;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 20px;
         }
 
         .dashboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        h1 {
+        .dashboard-header h1 {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.75rem;
-            color: #2d3748;
-            font-weight: 600;
+            font-size: 2rem;
+            color: #2c3e50;
+            margin: 0;
         }
 
         .header-buttons {
             display: flex;
-            gap: 1rem;
+            gap: 10px;
         }
 
         .main-content {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 2rem;
+            gap: 30px;
         }
 
         .section-title {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.25rem;
-            color: #2d3748;
-            margin-bottom: 1rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
         }
 
         .calendar-nav {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 1rem;
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .calendar-nav h2 {
-            font-size: 1.25rem;
-            color: #2d3748;
-            font-weight: 500;
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin: 0;
         }
 
         .weekly-calendar {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
         .day-column {
             background: white;
-            border-radius: 12px;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .day-header {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            color: #4a5568;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 1rem;
-            font-weight: 500;
+            background: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
         }
 
         .day-header.today {
-            color: #3182ce;
-            font-weight: 600;
+            background: #e3f2fd;
+            color: #1976d2;
         }
 
         .event-list {
             list-style: none;
-            padding: 0;
-            margin: 0;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            padding: 10px;
+            min-height: 200px;
         }
 
         .event-item {
-            background: white;
-            border-radius: 8px;
-            padding: 0.75rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            background: #fff;
             border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
         }
 
         .event-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .event-time {
-            font-size: 0.875rem;
-            color: #4a5568;
-            font-weight: 500;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
         }
 
         .event-title {
             font-weight: 600;
-            color: #2d3748;
+            margin-bottom: 5px;
         }
 
         .event-type {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
             display: inline-block;
-            font-weight: 500;
-            text-transform: capitalize;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
         }
 
         .event-type.class {
-            background: #ebf8ff;
-            color: #2b6cb0;
+            background: #e3f2fd;
+            color: #1976d2;
         }
 
         .event-type.visitor {
-            background: #faf5ff;
-            color: #805ad5;
+            background: #f3e5f5;
+            color: #7b1fa2;
         }
 
         .event-type.appointment {
-            background: #f0fff4;
-            color: #2f855a;
+            background: #e8f5e9;
+            color: #388e3c;
         }
 
         .event-type.playdate {
-            background: #fff5f5;
-            color: #c53030;
+            background: #fff3e0;
+            color: #f57c00;
         }
 
         .event-location {
-            font-size: 0.875rem;
-            color: #4a5568;
+            font-size: 0.9rem;
+            color: #666;
         }
 
         .recurring-indicator {
             position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            font-size: 0.75rem;
-            color: #4a5568;
+            top: 5px;
+            right: 5px;
+            font-size: 0.8rem;
+        }
+
+        .event-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 5px;
         }
 
         .visitor-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
 
         .visitor-item {
-            background: white;
-            border-radius: 12px;
-            padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 10px;
         }
 
         .visitor-name {
             font-weight: 600;
-            color: #2d3748;
-            margin-bottom: 0.5rem;
+            margin-bottom: 5px;
         }
 
         .visitor-date {
-            font-size: 0.875rem;
-            color: #4a5568;
-            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
         }
 
         .visitor-location {
-            font-size: 0.875rem;
-            color: #4a5568;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .directions-btn {
+            background: #2196F3;
+        }
+
+        .directions-btn:hover {
+            background: #1976D2;
         }
 
         .modal {
@@ -237,64 +298,42 @@
 
         .modal-content {
             background: white;
-            padding: 2rem;
-            border-radius: 12px;
+            padding: 30px;
+            border-radius: 8px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            position: relative;
         }
 
         .modal-content h2 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
-            color: #2d3748;
-            margin-bottom: 1.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
         }
 
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            color: #4a5568;
-            font-weight: 500;
+            margin-bottom: 5px;
+            color: #2c3e50;
         }
 
-        .form-group input[type="text"],
-        .form-group input[type="date"],
-        .form-group input[type="time"],
+        .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            color: #2d3748;
-            transition: border-color 0.2s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #3182ce;
-            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Quicksand', sans-serif;
         }
 
         .time-group {
             display: flex;
-            gap: 1rem;
-        }
-
-        .time-inputs {
-            display: flex;
-            gap: 1rem;
-            flex: 1;
+            gap: 20px;
         }
 
         .time-input {
@@ -303,107 +342,48 @@
 
         .time-input label {
             display: block;
-            margin-bottom: 0.5rem;
-            color: #4a5568;
-            font-weight: 500;
+            margin-bottom: 5px;
         }
 
         .repeat-options {
             display: none;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid #e2e8f0;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
 
         .form-buttons {
             display: flex;
             justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        button {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: #3182ce;
-            color: white;
-        }
-
-        button:hover {
-            background: #2c5282;
-            transform: translateY(-1px);
+            gap: 10px;
+            margin-top: 20px;
         }
 
         .close-btn {
-            background: #e2e8f0;
-            color: #4a5568;
+            background: #f44336;
         }
 
         .close-btn:hover {
-            background: #cbd5e0;
+            background: #d32f2f;
         }
 
         .delete-btn {
-            background: #e53e3e;
+            background: #f44336;
         }
 
         .delete-btn:hover {
-            background: #c53030;
+            background: #d32f2f;
         }
 
         .edit-btn {
-            background: #38a169;
+            background: #2196F3;
         }
 
         .edit-btn:hover {
-            background: #2f855a;
-        }
-
-        .directions-btn {
-            background: #805ad5;
-            font-size: 0.875rem;
-            padding: 0.5rem 1rem;
-        }
-
-        .directions-btn:hover {
-            background: #6b46c1;
-        }
-
-        .today-btn {
-            background: #38a169;
-        }
-
-        .today-btn:hover {
-            background: #2f855a;
-        }
-
-        .event-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
+            background: #1976D2;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .dashboard-header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .header-buttons {
-                width: 100%;
-                justify-content: center;
-            }
-
             .main-content {
                 grid-template-columns: 1fr;
             }
@@ -412,35 +392,40 @@
                 grid-template-columns: 1fr;
             }
 
-            .day-column {
-                min-height: auto;
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
             }
 
-            .modal-content {
-                width: 95%;
-                padding: 1.5rem;
+            .header-buttons {
+                width: 100%;
+                justify-content: space-between;
             }
 
             .time-group {
                 flex-direction: column;
-            }
-
-            .time-inputs {
-                flex-direction: column;
+                gap: 10px;
             }
 
             .form-buttons {
-                flex-direction: column;
+                flex-wrap: wrap;
             }
 
-            button {
-                width: 100%;
+            .form-buttons button {
+                flex: 1;
             }
         }
     </style>
 </head>
-
 <body>
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <h2>Enter Password</h2>
+            <input type="password" id="passwordInput" placeholder="Enter password">
+            <button onclick="checkPassword()">Login</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="dashboard-header">
             <h1>Soly and Alden's Schedule</h1>
@@ -548,6 +533,34 @@
         let currentDate = new Date();
         let events = JSON.parse(localStorage.getItem('events')) || [];
         let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
+
+        // Password protection
+        const CORRECT_PASSWORD = 'Birdie';
+
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const loginScreen = document.getElementById('loginScreen');
+            const container = document.querySelector('.container');
+            
+            if (passwordInput.value === CORRECT_PASSWORD) {
+                loginScreen.style.display = 'none';
+                container.style.display = 'block';
+                initializeCalendar();
+            } else {
+                alert('Incorrect password. Please try again.');
+                passwordInput.value = '';
+            }
+        }
+
+        // Hide the main container initially
+        document.querySelector('.container').style.display = 'none';
+
+        // Add enter key support for password
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
 
         function initDashboard() {
             updateWeekDisplay();
@@ -806,6 +819,32 @@
             return events;
         }
 
+        function deleteEvent() {
+            const eventId = document.getElementById('eventId').value;
+            const event = events.find(e => e.id === eventId);
+            
+            if (!event) return;
+            
+            if (event.isRecurring) {
+                const choice = confirm('This is a recurring event. Would you like to delete all instances of this event? Click OK to delete all instances, or Cancel to delete only this instance.');
+                
+                if (choice) {
+                    // Delete all instances of the recurring event
+                    events = events.filter(e => e.originalEventId !== event.originalEventId);
+                } else {
+                    // Delete only this specific instance
+                    events = events.filter(e => e.id !== eventId);
+                }
+            } else {
+                // Delete single event
+                events = events.filter(e => e.id !== eventId);
+            }
+            
+            localStorage.setItem('events', JSON.stringify(events));
+            closeEventModal();
+            initDashboard();
+        }
+
         function updateEvent() {
             const eventId = document.getElementById('eventId').value;
             const updatedEvent = {
@@ -830,16 +869,6 @@
             localStorage.setItem('events', JSON.stringify(events));
             closeEventModal();
             initDashboard();
-        }
-
-        function deleteEvent() {
-            if (confirm('Are you sure you want to delete this event?')) {
-                const eventId = document.getElementById('eventId').value;
-                events = events.filter(e => e.id !== eventId && e.originalEventId !== eventId);
-                localStorage.setItem('events', JSON.stringify(events));
-                closeEventModal();
-                initDashboard();
-            }
         }
 
         function renderVisitors() {
@@ -890,9 +919,6 @@
             currentDate = getStartOfWeek(new Date());
             initDashboard();
         }
-
-        // Initialize the dashboard
-        initializeCalendar();
     </script>
 </body>
 </html>
