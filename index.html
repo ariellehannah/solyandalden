@@ -439,6 +439,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="dashboard-header">
@@ -521,10 +522,11 @@
                     <div class="form-group">
                         <label for="repeatFrequency">Repeat Every</label>
                         <select id="repeatFrequency">
-                            <option value="1">1 week</option>
-                            <option value="2">2 weeks</option>
-                            <option value="3">3 weeks</option>
-                            <option value="4">4 weeks</option>
+                            <option value="1">Daily</option>
+                            <option value="7">Weekly</option>
+                            <option value="14">Every 2 weeks</option>
+                            <option value="21">Every 3 weeks</option>
+                            <option value="28">Every 4 weeks</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -570,6 +572,16 @@
             return startOfWeek;
         }
 
+        function convertToLocalTime(dateString, timeString) {
+            const date = new Date(dateString + 'T' + timeString + '-05:00'); // Chicago timezone
+            return date.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+                timeZone: 'America/Chicago'
+            });
+        }
+
         function renderWeeklyCalendar() {
             const calendar = document.getElementById('weeklyCalendar');
             calendar.innerHTML = '';
@@ -579,6 +591,7 @@
             for (let i = 0; i < 5; i++) {
                 const currentDay = new Date(startOfWeek);
                 currentDay.setDate(startOfWeek.getDate() + i);
+                currentDay.setHours(0, 0, 0, 0); // Reset time to midnight
                 
                 const dayColumn = document.createElement('div');
                 dayColumn.className = 'day-column';
@@ -588,20 +601,24 @@
                 dayHeader.textContent = currentDay.toLocaleDateString('en-US', { 
                     weekday: 'short',
                     month: 'short',
-                    day: 'numeric'
+                    day: 'numeric',
+                    timeZone: 'America/Chicago'
                 });
                 
                 const eventList = document.createElement('ul');
                 eventList.className = 'event-list';
                 
                 const dayEvents = events.filter(event => {
-                    const eventDate = new Date(event.date + 'T00:00:00-05:00'); // Chicago timezone
-                    const currentDayDate = new Date(currentDay);
-                    currentDayDate.setHours(0, 0, 0, 0);
-                    return eventDate.getTime() === currentDayDate.getTime();
+                    const eventDate = new Date(event.date + 'T00:00:00-05:00');
+                    eventDate.setHours(0, 0, 0, 0);
+                    return eventDate.getTime() === currentDay.getTime();
                 });
                 
-                dayEvents.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+                dayEvents.sort((a, b) => {
+                    const timeA = new Date('2000-01-01T' + a.startTime + '-05:00');
+                    const timeB = new Date('2000-01-01T' + b.startTime + '-05:00');
+                    return timeA - timeB;
+                });
                 
                 dayEvents.forEach(event => {
                     const eventItem = createEventElement(event);
@@ -619,7 +636,7 @@
             li.className = `event-item ${event.isRecurring ? 'recurring-event' : ''}`;
             li.innerHTML = `
                 <div class="event-time">
-                    ${formatTime(event.startTime)} <span>to</span> ${formatTime(event.endTime)}
+                    ${convertToLocalTime(event.date, event.startTime)} <span>to</span> ${convertToLocalTime(event.date, event.endTime)}
                 </div>
                 <div class="event-title">${event.title}</div>
                 <div class="event-type ${event.type}">${event.type}</div>
@@ -632,14 +649,6 @@
             
             li.onclick = () => showEventDetails(event);
             return li;
-        }
-
-        function formatTime(time) {
-            return new Date(`2000-01-01T${time}-05:00`).toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            });
         }
 
         function isToday(date) {
@@ -698,7 +707,7 @@
             document.getElementById('isRecurring').checked = event.isRecurring || false;
             
             if (event.isRecurring) {
-                document.getElementById('repeatFrequency').value = event.repeatFrequency || '1';
+                document.getElementById('repeatFrequency').value = event.repeatFrequency || '7';
                 document.getElementById('repeatEndDate').value = event.repeatEndDate || '';
                 document.getElementById('repeatOptions').style.display = 'block';
             } else {
@@ -726,6 +735,7 @@
             today.setHours(0, 0, 0, 0);
             const todayEvents = events.filter(event => {
                 const eventDate = new Date(event.date + 'T00:00:00-05:00');
+                eventDate.setHours(0, 0, 0, 0);
                 return eventDate.getTime() === today.getTime();
             });
             
@@ -734,7 +744,11 @@
                 return;
             }
 
-            todayEvents.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+            todayEvents.sort((a, b) => {
+                const timeA = new Date('2000-01-01T' + a.startTime + '-05:00');
+                const timeB = new Date('2000-01-01T' + b.startTime + '-05:00');
+                return timeA - timeB;
+            });
             
             const nextEvent = todayEvents.find(event => {
                 const eventTime = new Date(event.date + 'T' + event.startTime + '-05:00');
@@ -780,7 +794,13 @@
                     isRecurring: true,
                     originalEventId: event.id
                 });
-                currentDate.setDate(currentDate.getDate() + (frequency * 7));
+
+                // Handle daily vs weekly recurrence
+                if (frequency === 1) {
+                    currentDate.setDate(currentDate.getDate() + 1); // Daily
+                } else {
+                    currentDate.setDate(currentDate.getDate() + 7); // Weekly
+                }
             }
 
             return events;
@@ -834,7 +854,7 @@
                 visitorItem.className = 'visitor-item';
                 visitorItem.innerHTML = `
                     <div class="visitor-name">${event.title}</div>
-                    <div class="visitor-date">${new Date(event.date).toLocaleDateString()} from ${formatTime(event.startTime)} to ${formatTime(event.endTime)}</div>
+                    <div class="visitor-date">${new Date(event.date).toLocaleDateString()} from ${convertToLocalTime(event.date, event.startTime)} to ${convertToLocalTime(event.date, event.endTime)}</div>
                     ${event.location ? `<div class="visitor-location">${event.location}</div>` : ''}
                 `;
                 visitorsList.appendChild(visitorItem);
@@ -860,8 +880,8 @@
             
             const newEvents = createRecurringEvents(event);
             events = [...events, ...newEvents];
-            localStorage.setItem('events', JSON.stringify(events));
             
+            localStorage.setItem('events', JSON.stringify(events));
             closeEventModal();
             initDashboard();
         };
