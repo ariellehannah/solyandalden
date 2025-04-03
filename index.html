@@ -595,8 +595,10 @@
                 eventList.className = 'event-list';
                 
                 const dayEvents = events.filter(event => {
-                    const eventDate = new Date(event.date);
-                    return eventDate.toDateString() === currentDay.toDateString();
+                    const eventDate = new Date(event.date + 'T00:00:00-05:00'); // Chicago timezone
+                    const currentDayDate = new Date(currentDay);
+                    currentDayDate.setHours(0, 0, 0, 0);
+                    return eventDate.getTime() === currentDayDate.getTime();
                 });
                 
                 dayEvents.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
@@ -633,7 +635,7 @@
         }
 
         function formatTime(time) {
-            return new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', {
+            return new Date(`2000-01-01T${time}-05:00`).toLocaleTimeString('en-US', {
                 hour: 'numeric',
                 minute: '2-digit',
                 hour12: true
@@ -642,7 +644,10 @@
 
         function isToday(date) {
             const today = new Date();
-            return date.toDateString() === today.toDateString();
+            today.setHours(0, 0, 0, 0);
+            const compareDate = new Date(date);
+            compareDate.setHours(0, 0, 0, 0);
+            return today.getTime() === compareDate.getTime();
         }
 
         function previousWeek() {
@@ -718,9 +723,11 @@
 
         function getDirectionsForToday() {
             const today = new Date();
-            const todayEvents = events.filter(event => 
-                new Date(event.date).toDateString() === today.toDateString()
-            );
+            today.setHours(0, 0, 0, 0);
+            const todayEvents = events.filter(event => {
+                const eventDate = new Date(event.date + 'T00:00:00-05:00');
+                return eventDate.getTime() === today.getTime();
+            });
             
             if (todayEvents.length === 0) {
                 alert('No events scheduled for today');
@@ -729,9 +736,10 @@
 
             todayEvents.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
             
-            const nextEvent = todayEvents.find(event => 
-                new Date(event.startTime) > new Date()
-            ) || todayEvents[0];
+            const nextEvent = todayEvents.find(event => {
+                const eventTime = new Date(event.date + 'T' + event.startTime + '-05:00');
+                return eventTime > new Date();
+            }) || todayEvents[0];
 
             if (nextEvent.location) {
                 getDirections(nextEvent.location);
@@ -757,8 +765,8 @@
             if (!event.isRecurring) return [event];
 
             const events = [];
-            const startDate = new Date(event.date);
-            const endDate = new Date(event.repeatEndDate);
+            const startDate = new Date(event.date + 'T00:00:00-05:00');
+            const endDate = new Date(event.repeatEndDate + 'T00:00:00-05:00');
             const frequency = parseInt(event.repeatFrequency);
 
             let currentDate = new Date(startDate);
