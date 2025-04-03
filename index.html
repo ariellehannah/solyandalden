@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soly and Alden's Schedule</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.25rem;
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .calendar-nav h2 {
+            font-size: 1.25rem;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .weekly-calendar {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .day-column {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .day-header {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            color: #4a5568;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .day-header.today {
+            color: #3182ce;
+            font-weight: 600;
+        }
+
+        .event-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .event-item {
+            background: white;
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .event-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-time {
+            font-size: 0.875rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .event-type {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            display: inline-block;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .event-type.class {
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .event-type.visitor {
+            background: #faf5ff;
+            color: #805ad5;
+        }
+
+        .event-type.appointment {
+            background: #f0fff4;
+            color: #2f855a;
+        }
+
+        .event-type.playdate {
+            background: #fff5f5;
+            color: #c53030;
+        }
+
+        .event-location {
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+
+        .recurring-indicator {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            font-size: 0.75rem;
+            color: #4a5568;
+        }
+
+        .visitor-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .visitor-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .visitor-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .visitor-date {
+            font-size: 0.875rem;
+            color: #4a5568;
+            margin-bottom: 0.5rem;
+        }
+
+        .visitor-location {
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group input[type="time"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #2d3748;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .time-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .time-inputs {
+            display: flex;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .time-input {
+            flex: 1;
+        }
+
+        .time-input label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .repeat-options {
+            display: none;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #3182ce;
+            color: white;
+        }
+
+        button:hover {
+            background: #2c5282;
+            transform: translateY(-1px);
+        }
+
+        .close-btn {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .close-btn:hover {
+            background: #cbd5e0;
+        }
+
+        .delete-btn {
+            background: #e53e3e;
+        }
+
+        .delete-btn:hover {
+            background: #c53030;
+        }
+
+        .edit-btn {
+            background: #38a169;
+        }
+
+        .edit-btn:hover {
+            background: #2f855a;
+        }
+
+        .directions-btn {
+            background: #805ad5;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .directions-btn:hover {
+            background: #6b46c1;
+        }
+
+        .today-btn {
+            background: #38a169;
+        }
+
+        .today-btn:hover {
+            background: #2f855a;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .header-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .weekly-calendar {
+                grid-template-columns: 1fr;
+            }
+
+            .day-column {
+                min-height: auto;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            .time-group {
+                flex-direction: column;
+            }
+
+            .time-inputs {
+                flex-direction: column;
+            }
+
+            .form-buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Soly and Alden's Schedule</h1>
+            <div class="header-buttons">
+                <button class="directions-btn" onclick="getDirectionsForToday()">Get Directions</button>
+                <button onclick="showAddEventModal()">Add Event</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="schedule-section">
+                <h2 class="section-title">Weekly Schedule</h2>
+                <div class="calendar-nav">
+                    <button onclick="previousWeek()">Previous Week</button>
+                    <h2 id="currentWeek">Week of Month Day, Year</h2>
+                    <button onclick="nextWeek()">Next Week</button>
+                    <button onclick="goToToday()" class="today-btn">Today</button>
+                </div>
+                <div class="weekly-calendar" id="weeklyCalendar"></div>
+            </div>
+
+            <div class="visitors-section">
+                <h2 class="section-title">Upcoming Visitors</h2>
+                <div class="visitor-list" id="visitorsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Add Event</h2>
+            <form id="eventForm">
+                <input type="hidden" id="eventId">
+                <div class="form-group">
+                    <label for="eventTitle">Event Title</label>
+                    <input type="text" id="eventTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDate">Date</label>
+                    <input type="date" id="eventDate" required>
+                </div>
+                <div class="form-group time-group">
+                    <label>Time</label>
+                    <div class="time-inputs">
+                        <div class="time-input">
+                            <label for="eventStartTime">Start</label>
+                            <input type="time" id="eventStartTime" required>
+                        </div>
+                        <div class="time-input">
+                            <label for="eventEndTime">End</label>
+                            <input type="time" id="eventEndTime" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="eventType">Event Type</label>
+                    <select id="eventType" required>
+                        <option value="class">Class</option>
+                        <option value="visitor">Visitor</option>
+                        <option value="appointment">Appointment</option>
+                        <option value="playdate">Playdate</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="eventLocation">Location</label>
+                    <input type="text" id="eventLocation" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">Description</label>
+                    <textarea id="eventDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="isRecurring" onchange="toggleRepeatOptions()">
+                        Recurring Event
+                    </label>
+                </div>
+                <div class="repeat-options" id="repeatOptions">
+                    <div class="form-group">
+                        <label for="repeatFrequency">Repeat Every</label>
+                        <select id="repeatFrequency">
+                            <option value="1">1 week</option>
+                            <option value="2">2 weeks</option>
+                            <option value="3">3 weeks</option>
+                            <option value="4">4 weeks</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="repeatEndDate">End Date</label>
+                        <input type="date" id="repeatEndDate">
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="close-btn" onclick="closeEventModal()">Cancel</button>
+                    <button type="button" id="deleteButton" class="delete-btn" style="display: none;" onclick="deleteEvent()">Delete Event</button>
+                    <button type="button" id="editButton" class="edit-btn" style="display: none;" onclick="updateEvent()">Update Event</button>
+                    <button type="submit" id="saveButton">Save Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let events = JSON.parse(localStorage.getItem('events')) || [];
+        let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
+
+        function initDashboard() {
+            updateWeekDisplay();
+            renderWeeklyCalendar();
+            renderVisitors();
+        }
+
+        function updateWeekDisplay() {
+            const startOfWeek = getStartOfWeek(currentDate);
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(endOfWeek.getDate() + 4);
+            
+            document.getElementById('currentWeek').textContent = 
+                `Week of ${startOfWeek.toLocaleDateString()} - ${endOfWeek.toLocaleDateString()}`;
+        }
+
+        function getStartOfWeek(date) {
+            const startOfWeek = new Date(date);
+            const day = startOfWeek.getDay();
+            const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
+            startOfWeek.setDate(diff);
+            return startOfWeek;
+        }
+
+        function renderWeeklyCalendar() {
+            const calendar = document.getElementById('weeklyCalendar');
+            calendar.innerHTML = '';
+            
+            const startOfWeek = getStartOfWeek(currentDate);
+            
+            for (let i = 0; i < 5; i++) {
+                const currentDay = new Date(startOfWeek);
+                currentDay.setDate(startOfWeek.getDate() + i);
+                
+                const dayColumn = document.createElement('div');
+                dayColumn.className = 'day-column';
+                
+                const dayHeader = document.createElement('div');
+                dayHeader.className = `day-header ${isToday(currentDay) ? 'today' : ''}`;
+                dayHeader.textContent = currentDay.toLocaleDateString('en-US', { 
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                const eventList = document.createElement('ul');
+                eventList.className = 'event-list';
+                
+                const dayEvents = events.filter(event => {
+                    const eventDate = new Date(event.date);
+                    return eventDate.toDateString() === currentDay.toDateString();
+                });
+                
+                dayEvents.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+                
+                dayEvents.forEach(event => {
+                    const eventItem = createEventElement(event);
+                    eventList.appendChild(eventItem);
+                });
+                
+                dayColumn.appendChild(dayHeader);
+                dayColumn.appendChild(eventList);
+                calendar.appendChild(dayColumn);
+            }
+        }
+
+        function createEventElement(event) {
+            const li = document.createElement('li');
+            li.className = `event-item ${event.isRecurring ? 'recurring-event' : ''}`;
+            li.innerHTML = `
+                <div class="event-time">
+                    ${formatTime(event.startTime)} <span>to</span> ${formatTime(event.endTime)}
+                </div>
+                <div class="event-title">${event.title}</div>
+                <div class="event-type ${event.type}">${event.type}</div>
+                <div class="event-location">${event.location}</div>
+                ${event.isRecurring ? '<div class="recurring-indicator">🔄</div>' : ''}
+                <div class="event-actions">
+                    <button class="directions-btn" onclick="event.stopPropagation(); getDirections('${event.location}')">Get Directions</button>
+                </div>
+            `;
+            
+            li.onclick = () => showEventDetails(event);
+            return li;
+        }
+
+        function formatTime(time) {
+            return new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        function isToday(date) {
+            const today = new Date();
+            return date.toDateString() === today.toDateString();
+        }
+
+        function previousWeek() {
+            currentDate.setDate(currentDate.getDate() - 5);
+            initDashboard();
+        }
+
+        function nextWeek() {
+            currentDate.setDate(currentDate.getDate() + 5);
+            initDashboard();
+        }
+
+        function goToToday() {
+            currentDate = new Date();
+            currentDate = getStartOfWeek(currentDate);
+            initDashboard();
+        }
+
+        function showAddEventModal() {
+            document.getElementById('modalTitle').textContent = 'Add Event';
+            document.getElementById('eventForm').reset();
+            document.getElementById('eventId').value = '';
+            document.getElementById('editButton').style.display = 'none';
+            document.getElementById('deleteButton').style.display = 'none';
+            document.getElementById('saveButton').style.display = 'block';
+            document.getElementById('eventModal').style.display = 'flex';
+        }
+
+        function closeEventModal() {
+            document.getElementById('eventModal').style.display = 'none';
+        }
+
+        function showEventDetails(event) {
+            const modal = document.getElementById('eventModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('eventForm');
+            
+            modalTitle.textContent = 'Event Details';
+            
+            document.getElementById('eventId').value = event.id;
+            document.getElementById('eventTitle').value = event.title;
+            document.getElementById('eventDate').value = event.date;
+            document.getElementById('eventStartTime').value = event.startTime;
+            document.getElementById('eventEndTime').value = event.endTime;
+            document.getElementById('eventType').value = event.type;
+            document.getElementById('eventLocation').value = event.location;
+            document.getElementById('eventDescription').value = event.description || '';
+            document.getElementById('isRecurring').checked = event.isRecurring || false;
+            
+            if (event.isRecurring) {
+                document.getElementById('repeatFrequency').value = event.repeatFrequency || '1';
+                document.getElementById('repeatEndDate').value = event.repeatEndDate || '';
+                document.getElementById('repeatOptions').style.display = 'block';
+            } else {
+                document.getElementById('repeatOptions').style.display = 'none';
+            }
+            
+            document.getElementById('editButton').style.display = 'block';
+            document.getElementById('deleteButton').style.display = 'block';
+            document.getElementById('saveButton').style.display = 'none';
+            
+            modal.style.display = 'flex';
+        }
+
+        function getDirections(location) {
+            if (!location) {
+                alert('No location specified for this event');
+                return;
+            }
+            const encodedLocation = encodeURIComponent(location);
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodedLocation}&travelmode=transit`, '_blank');
+        }
+
+        function getDirectionsForToday() {
+            const today = new Date();
+            const todayEvents = events.filter(event => 
+                new Date(event.date).toDateString() === today.toDateString()
+            );
+            
+            if (todayEvents.length === 0) {
+                alert('No events scheduled for today');
+                return;
+            }
+
+            todayEvents.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+            
+            const nextEvent = todayEvents.find(event => 
+                new Date(event.startTime) > new Date()
+            ) || todayEvents[0];
+
+            if (nextEvent.location) {
+                getDirections(nextEvent.location);
+            } else {
+                alert('No location specified for the next event');
+            }
+        }
+
+        function toggleRepeatOptions() {
+            const repeatOptions = document.getElementById('repeatOptions');
+            const isRecurring = document.getElementById('isRecurring').checked;
+            repeatOptions.style.display = isRecurring ? 'block' : 'none';
+            
+            if (isRecurring) {
+                const startDate = new Date(document.getElementById('eventDate').value);
+                const endDate = new Date(startDate);
+                endDate.setMonth(endDate.getMonth() + 3);
+                document.getElementById('repeatEndDate').value = endDate.toISOString().split('T')[0];
+            }
+        }
+
+        function createRecurringEvents(event) {
+            if (!event.isRecurring) return [event];
+
+            const events = [];
+            const startDate = new Date(event.date);
+            const endDate = new Date(event.repeatEndDate);
+            const frequency = parseInt(event.repeatFrequency);
+
+            let currentDate = new Date(startDate);
+            while (currentDate <= endDate) {
+                events.push({
+                    ...event,
+                    id: `${event.id}-${currentDate.getTime()}`,
+                    date: currentDate.toISOString().split('T')[0],
+                    startTime: event.startTime,
+                    endTime: event.endTime,
+                    isRecurring: true,
+                    originalEventId: event.id
+                });
+                currentDate.setDate(currentDate.getDate() + (frequency * 7));
+            }
+
+            return events;
+        }
+
+        function updateEvent() {
+            const eventId = document.getElementById('eventId').value;
+            const updatedEvent = {
+                id: eventId,
+                title: document.getElementById('eventTitle').value,
+                date: document.getElementById('eventDate').value,
+                startTime: document.getElementById('eventStartTime').value,
+                endTime: document.getElementById('eventEndTime').value,
+                type: document.getElementById('eventType').value,
+                location: document.getElementById('eventLocation').value,
+                description: document.getElementById('eventDescription').value,
+                isRecurring: document.getElementById('isRecurring').checked,
+                repeatFrequency: document.getElementById('repeatFrequency').value,
+                repeatEndDate: document.getElementById('repeatEndDate').value
+            };
+
+            events = events.filter(e => e.id !== eventId && e.originalEventId !== eventId);
+            
+            const newEvents = createRecurringEvents(updatedEvent);
+            events = [...events, ...newEvents];
+            
+            localStorage.setItem('events', JSON.stringify(events));
+            closeEventModal();
+            initDashboard();
+        }
+
+        function deleteEvent() {
+            if (confirm('Are you sure you want to delete this event?')) {
+                const eventId = document.getElementById('eventId').value;
+                events = events.filter(e => e.id !== eventId && e.originalEventId !== eventId);
+                localStorage.setItem('events', JSON.stringify(events));
+                closeEventModal();
+                initDashboard();
+            }
+        }
+
+        function renderVisitors() {
+            const visitorsList = document.getElementById('visitorsList');
+            visitorsList.innerHTML = '';
+            
+            const visitorEvents = events.filter(event => event.type === 'visitor');
+            visitorEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            visitorEvents.forEach(event => {
+                const visitorItem = document.createElement('div');
+                visitorItem.className = 'visitor-item';
+                visitorItem.innerHTML = `
+                    <div class="visitor-name">${event.title}</div>
+                    <div class="visitor-date">${new Date(event.date).toLocaleDateString()} from ${formatTime(event.startTime)} to ${formatTime(event.endTime)}</div>
+                    ${event.location ? `<div class="visitor-location">${event.location}</div>` : ''}
+                `;
+                visitorsList.appendChild(visitorItem);
+            });
+        }
+
+        document.getElementById('eventForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const event = {
+                id: Date.now().toString(),
+                title: document.getElementById('eventTitle').value,
+                date: document.getElementById('eventDate').value,
+                startTime: document.getElementById('eventStartTime').value,
+                endTime: document.getElementById('eventEndTime').value,
+                type: document.getElementById('eventType').value,
+                location: document.getElementById('eventLocation').value,
+                description: document.getElementById('eventDescription').value,
+                isRecurring: document.getElementById('isRecurring').checked,
+                repeatFrequency: document.getElementById('repeatFrequency').value,
+                repeatEndDate: document.getElementById('repeatEndDate').value
+            };
+            
+            const newEvents = createRecurringEvents(event);
+            events = [...events, ...newEvents];
+            localStorage.setItem('events', JSON.stringify(events));
+            
+            closeEventModal();
+            initDashboard();
+        };
+
+        function initializeCalendar() {
+            currentDate = getStartOfWeek(new Date());
+            initDashboard();
+        }
+
+        // Initialize the dashboard
+        initializeCalendar();
+    </script>
+</body>
+</html>
