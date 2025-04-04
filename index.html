@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soly and Alden's Schedule</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Add Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -417,6 +420,7 @@
         }
     </style>
 </head>
+
 <body>
     <div id="loginScreen" class="login-screen">
         <div class="login-container">
@@ -530,9 +534,43 @@
     </div>
 
     <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBGujqHKanaTlHz3aGWO3BwUPmveahZ9dU",
+            authDomain: "solyandalden.firebaseapp.com",
+            databaseURL: "https://solyandalden-default-rtdb.firebaseio.com",
+            projectId: "solyandalden",
+            storageBucket: "solyandalden.firebasestorage.app",
+            messagingSenderId: "1654270146",
+            appId: "1:1654270146:web:040f3ed67e3c16abb4335b"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         let currentDate = new Date();
-        let events = JSON.parse(localStorage.getItem('events')) || [];
-        let visitors = JSON.parse(localStorage.getItem('visitors')) || [];
+        let events = [];
+
+        // Function to load events from Firebase
+        function loadEventsFromFirebase() {
+            database.ref('events').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    events = Object.values(data);
+                    initDashboard();
+                }
+            });
+        }
+
+        // Function to save events to Firebase
+        function saveEventsToFirebase(newEvents) {
+            const eventsRef = database.ref('events');
+            eventsRef.set(newEvents.reduce((acc, event) => {
+                acc[event.id] = event;
+                return acc;
+            }, {}));
+        }
 
         // Password protection
         const CORRECT_PASSWORD = 'Birdie';
@@ -545,7 +583,7 @@
             if (passwordInput.value === CORRECT_PASSWORD) {
                 loginScreen.style.display = 'none';
                 container.style.display = 'block';
-                initializeCalendar();
+                loadEventsFromFirebase();
             } else {
                 alert('Incorrect password. Please try again.');
                 passwordInput.value = '';
@@ -604,7 +642,7 @@
             for (let i = 0; i < 5; i++) {
                 const currentDay = new Date(startOfWeek);
                 currentDay.setDate(startOfWeek.getDate() + i);
-                currentDay.setHours(0, 0, 0, 0); // Reset time to midnight
+                currentDay.setHours(0, 0, 0, 0);
                 
                 const dayColumn = document.createElement('div');
                 dayColumn.className = 'day-column';
@@ -808,7 +846,6 @@
                     originalEventId: event.id
                 });
 
-                // Handle daily vs weekly recurrence
                 if (frequency === 1) {
                     currentDate.setDate(currentDate.getDate() + 1); // Daily
                 } else {
@@ -817,32 +854,6 @@
             }
 
             return events;
-        }
-
-        function deleteEvent() {
-            const eventId = document.getElementById('eventId').value;
-            const event = events.find(e => e.id === eventId);
-            
-            if (!event) return;
-            
-            if (event.isRecurring) {
-                const choice = confirm('This is a recurring event. Would you like to delete all instances of this event? Click OK to delete all instances, or Cancel to delete only this instance.');
-                
-                if (choice) {
-                    // Delete all instances of the recurring event
-                    events = events.filter(e => e.originalEventId !== event.originalEventId);
-                } else {
-                    // Delete only this specific instance
-                    events = events.filter(e => e.id !== eventId);
-                }
-            } else {
-                // Delete single event
-                events = events.filter(e => e.id !== eventId);
-            }
-            
-            localStorage.setItem('events', JSON.stringify(events));
-            closeEventModal();
-            initDashboard();
         }
 
         function updateEvent() {
@@ -866,28 +877,30 @@
             const newEvents = createRecurringEvents(updatedEvent);
             events = [...events, ...newEvents];
             
-            localStorage.setItem('events', JSON.stringify(events));
+            saveEventsToFirebase(events);
             closeEventModal();
-            initDashboard();
         }
 
-        function renderVisitors() {
-            const visitorsList = document.getElementById('visitorsList');
-            visitorsList.innerHTML = '';
+        function deleteEvent() {
+            const eventId = document.getElementById('eventId').value;
+            const event = events.find(e => e.id === eventId);
             
-            const visitorEvents = events.filter(event => event.type === 'visitor');
-            visitorEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+            if (!event) return;
             
-            visitorEvents.forEach(event => {
-                const visitorItem = document.createElement('div');
-                visitorItem.className = 'visitor-item';
-                visitorItem.innerHTML = `
-                    <div class="visitor-name">${event.title}</div>
-                    <div class="visitor-date">${new Date(event.date).toLocaleDateString()} from ${convertToLocalTime(event.date, event.startTime)} to ${convertToLocalTime(event.date, event.endTime)}</div>
-                    ${event.location ? `<div class="visitor-location">${event.location}</div>` : ''}
-                `;
-                visitorsList.appendChild(visitorItem);
-            });
+            if (event.isRecurring) {
+                const choice = confirm('This is a recurring event. Would you like to delete all instances of this event? Click OK to delete all instances, or Cancel to delete only this instance.');
+                
+                if (choice) {
+                    events = events.filter(e => e.originalEventId !== event.originalEventId);
+                } else {
+                    events = events.filter(e => e.id !== eventId);
+                }
+            } else {
+                events = events.filter(e => e.id !== eventId);
+            }
+            
+            saveEventsToFirebase(events);
+            closeEventModal();
         }
 
         document.getElementById('eventForm').onsubmit = function(e) {
@@ -910,9 +923,8 @@
             const newEvents = createRecurringEvents(event);
             events = [...events, ...newEvents];
             
-            localStorage.setItem('events', JSON.stringify(events));
+            saveEventsToFirebase(events);
             closeEventModal();
-            initDashboard();
         };
 
         function initializeCalendar() {
